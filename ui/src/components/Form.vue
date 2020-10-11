@@ -18,9 +18,8 @@
 <script lang="ts">
 
 import { Component, Vue } from "vue-property-decorator";
-import axios from "axios";
 
-import { config } from "@/config";
+import httpService from "@/services/http.service";
 import { ErrorType } from "@/errors";
 
 interface SearchResponse {
@@ -35,6 +34,7 @@ export default class Form extends Vue {
   name = ""
   error: ErrorType | null = null;
   canthey: boolean | null = null;
+
   mounted() {
     const input = document.querySelector<HTMLElement>("input[name='name']")
     if (input) {
@@ -43,12 +43,12 @@ export default class Form extends Vue {
   }
 
   onSubmit(e: Event) {
-    const { BASE_URL } = config;
     this.canthey = null;
 
     e.preventDefault();
-    axios.post(BASE_URL + "/search", { name: this.name })
-    .then(({ data }: SearchResponse) => {
+
+    httpService.searchUser(this.name)
+    .then(({ data }) => {
         this.canthey = data.canthey;
     })
     .catch((err) => {

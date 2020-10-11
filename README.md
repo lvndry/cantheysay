@@ -2,9 +2,8 @@
 
 # Documentation
 
-[Server](https://github.com/lvndry/cantheysay/tree/main/server)
-
-[Front](https://github.com/lvndry/cantheysay/tree/main/ui)
+- [Server](https://github.com/lvndry/cantheysay/tree/main/server)
+- [Front](https://github.com/lvndry/cantheysay/tree/main/ui)
 
 ## Getting started
 
