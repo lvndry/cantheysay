@@ -1,10 +1,15 @@
 <template>
   <div class="ct-form-container">
     <form id="cantheyform" @submit="onSubmit" @submit.stop.prevent="prevent" class="ct-container" novalidate="true">
-      <span>Can <input name="name" minlength="2" type="text" v-model="name" class="ct-input" required /><span style="visibilty:hidden" class='measure'></span> say the N word</span>
+      <span>
+        Can <input name="name" minlength="2" type="text" v-model="name" class="ct-input" required /><span style="visibilty:hidden" class='measure'></span> say the n-word ?
+      </span>
     </form>
     <div v-if="canthey !== null" class="ct-resp">
       {{ canthey ? "Yes" : "No" }}
+    </div>
+    <div v-if="pending">
+      <img src="../assets/array.gif" alt="pending.gif">
     </div>
     <div class="error" v-if="error === 404">
       User not found
@@ -34,6 +39,7 @@ export default class Form extends Vue {
   name = ""
   error: ErrorType | null = null;
   canthey: boolean | null = null;
+  pending = false;
 
   mounted() {
     const input = document.querySelector<HTMLInputElement>("input[name='name']")!;
@@ -43,7 +49,7 @@ export default class Form extends Vue {
       input.addEventListener("input", function() {
         const span = (input.nextElementSibling as HTMLSpanElement)!;
           span.textContent = input.value;
-          this.style.width = (span.offsetWidth + 3) + "px"
+          this.style.width = (span.offsetWidth + 5) + "px"
           span.textContent = ""
       });
     }
@@ -53,6 +59,7 @@ export default class Form extends Vue {
     this.canthey = null;
 
     e.preventDefault();
+    this.pending = true;
     if (this.name.length === 0) {
     } else {
       httpService.searchUser(this.name)
@@ -66,6 +73,9 @@ export default class Form extends Vue {
         } else if (status === ErrorType.INTERNAL) {
           this.error = ErrorType.INTERNAL
         }
+      })
+      .finally(() => {
+        this.pending = false
       })
     }
   }
@@ -82,7 +92,7 @@ export default class Form extends Vue {
 <style>
   .ct-container {
     margin-top: 30px;
-    font-size: 2em;
+    font-size: 2.5em;
   }
 
   .ct-input, .ct-input:focus {
@@ -92,6 +102,7 @@ export default class Form extends Vue {
     font-size: 1em;
     align-self: center;
     white-space: pre;
+    width: 1px;
   }
 
   .ct-input:invalid:not(:focus) {
@@ -105,5 +116,9 @@ export default class Form extends Vue {
   @keyframes blink-empty {
     0% { background-size: 1px 1.2em; }
     50% { background-size: 0 1.2em; }
+  }
+
+  .ct-resp {
+    font-size: 8em;
   }
 </style>
