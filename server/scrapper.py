@@ -1,16 +1,20 @@
+from typing import Any
 import requests
 from bs4 import BeautifulSoup
 from flask import Flask
 from flask import request
+from flask_cors import CORS
 
 BASE_URL = "https://ethnicelebs.com"
 
 app = Flask(__name__)
+CORS(app)
 
 
 def get_user(name: str):
     response = requests.get(
-        BASE_URL + "/" + name.strip().replace(" ", "-").lower())
+        BASE_URL + "/" + name.strip().replace(" ", "-").lower()
+    )
 
     return response.text, response.status_code
 
@@ -35,10 +39,11 @@ def parse_data(html_text):
 
 def is_african(ethnicity: str, tags):
     african_tag = False
-    for child in tags.children:
-        if "african" in str(child).lower():
-            african_tag = True
-            break
+    if len(list(tags.children)) > 0:
+        for child in tags.children:
+            if "african" in str(child).lower():
+                african_tag = True
+                break
 
     return african_tag == True or "african" in ethnicity
 
@@ -46,6 +51,11 @@ def is_african(ethnicity: str, tags):
 @app.route('/search', methods=["POST"])
 def main():
     name = request.json["name"]
+    if len(name) == 0:
+        return {
+            "message": "You must type a correct name"
+        }, 400
+
     can_they = False
     app.logger.info("Can " + name + " say the n-word?")
     data, status = get_user(name)
@@ -59,10 +69,10 @@ def main():
         app.logger.info("No")
 
     return {
-        "theycan": can_they
+        "canthey": can_they
     }, 200
 
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=8080)
+    app.run(host='127.0.0.1', port=3030)
     main()
