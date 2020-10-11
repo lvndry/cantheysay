@@ -1,18 +1,20 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/question_mark.png">
-    <Input />
+    <img alt="canthey logo" src="../assets/question_mark.png">
+    <Form />
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import Input from '@/components/Input.vue';
+import Form from "@/components/Form.vue";
 
 export default {
-  name: 'Home',
+  name: "Home",
   components: {
-    Input,
-  },
+    Form
+  }
 };
 </script>
+
+<style scoped>
+</style>
