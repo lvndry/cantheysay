@@ -1,8 +1,9 @@
 # Can they say it ?
 
-# Document
+# Documentation
 
 [Server](https://github.com/lvndry/cantheysay/tree/main/server)
+
 [Front](https://github.com/lvndry/cantheysay/tree/main/ui)
 
 ## Getting started
