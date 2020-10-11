@@ -1,17 +1,19 @@
 import requests
 import sys
 from bs4 import BeautifulSoup
+from flask import Flask
+from flask import request
 
 BASE_URL = "https://ethnicelebs.com"
+
+app = Flask(__name__)
 
 
 def get_user(name: str):
     response = requests.get(
         BASE_URL + "/" + name.strip().replace(" ", "-").lower())
-    if response.status_code == 404:
-        raise ValueError("User not found")
 
-    return response.text
+    return response.text, response.status_code
 
 
 def parse_data(html_text):
@@ -37,26 +39,32 @@ def is_african(ethnicity: str, tags):
     for child in tags.children:
         if "african" in str(child).lower():
             african = True
-        break
+            break
 
-    if african == True or "african" in ethnicity.lower():
-        return True
-    else:
-        return False
+    return african == True or "african" in ethnicity.lower()
 
 
+@app.route('/search', methods=["POST"])
 def main():
-    name = sys.argv[1]
+    name = request.json["name"]
+    print(name)
+    theyCan = False
     print("Can " + name + " say the n-word?")
-    data = get_user(name)
+    data, status = get_user(name)
+    if status == 404:
+        return {}, 404
     ethnicity, tags = parse_data(data)
-    theycan = is_african(ethnicity, tags)
-    if theycan == True:
+    if is_african(ethnicity, tags) == True:
         print("Yes")
+        theyCan = True
     else:
         print("No")
-    return
+
+    return {
+        "theycan": theyCan
+    }, 200
 
 
 if __name__ == "__main__":
+    app.run(host='127.0.0.1', port=8080)
     main()
