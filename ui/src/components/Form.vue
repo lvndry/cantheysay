@@ -1,7 +1,7 @@
 <template>
   <div class="ct-form-container">
-    <form id="cantheyform" @submit="onSubmit" @submit.stop.prevent="prevent" class="container" novalidate="true">
-      Can <input name="name" type="text" v-model="name" class="ct-input" required /> say the N word
+    <form id="cantheyform" @submit="onSubmit" @submit.stop.prevent="prevent" class="ct-container" novalidate="true">
+      <span>Can <input name="name" minlength="2" type="text" v-model="name" class="ct-input" required /><span style="visibilty:hidden" class='measure'></span> say the N word</span>
     </form>
     <div v-if="canthey !== null" class="ct-resp">
       {{ canthey ? "Yes" : "No" }}
@@ -36,9 +36,16 @@ export default class Form extends Vue {
   canthey: boolean | null = null;
 
   mounted() {
-    const input = document.querySelector<HTMLElement>("input[name='name']")
+    const input = document.querySelector<HTMLInputElement>("input[name='name']")!;
     if (input) {
       input.focus()
+
+      input.addEventListener("input", function() {
+        const span = (input.nextElementSibling as HTMLSpanElement)!;
+          span.textContent = input.value;
+          this.style.width = (span.offsetWidth + 3) + "px"
+          span.textContent = ""
+      });
     }
   }
 
@@ -46,19 +53,21 @@ export default class Form extends Vue {
     this.canthey = null;
 
     e.preventDefault();
-
-    httpService.searchUser(this.name)
-    .then(({ data }) => {
-        this.canthey = data.canthey;
-    })
-    .catch((err) => {
-      const { status } = err.response;
-      if (status === ErrorType.NOT_FOUND) {
-        this.error = ErrorType.NOT_FOUND
-      } else if (status === ErrorType.INTERNAL) {
-        this.error = ErrorType.INTERNAL
-      }
-    })
+    if (this.name.length === 0) {
+    } else {
+      httpService.searchUser(this.name)
+      .then(({ data }) => {
+          this.canthey = data.canthey;
+      })
+      .catch((err) => {
+        const { status } = err.response;
+        if (status === ErrorType.NOT_FOUND) {
+          this.error = ErrorType.NOT_FOUND
+        } else if (status === ErrorType.INTERNAL) {
+          this.error = ErrorType.INTERNAL
+        }
+      })
+    }
   }
 
   prevent = (event: Event) => {
@@ -71,10 +80,18 @@ export default class Form extends Vue {
 </script>
 
 <style>
+  .ct-container {
+    margin-top: 30px;
+    font-size: 2em;
+  }
+
   .ct-input, .ct-input:focus {
     background: transparent;
     border: none;
     outline-width: 0;
+    font-size: 1em;
+    align-self: center;
+    white-space: pre;
   }
 
   .ct-input:invalid:not(:focus) {

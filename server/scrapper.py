@@ -57,7 +57,8 @@ def main():
         }, 400
 
     can_they = False
-    app.logger.info("Can " + name + " say the n-word?")
+    app.logger.info(f'Can {name} say the n-word?')
+
     data, status = get_user(name)
     if status == 404:
         return {}, 404

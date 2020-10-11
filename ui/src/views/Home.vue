@@ -17,7 +17,5 @@ export default {
 </script>
 
 <style>
-  form {
-    margin-top: 30px;
-  }
+
 </style>
