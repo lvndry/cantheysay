@@ -1,2 +1,12 @@
 # VS Code
 .vscode
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Environments
+.env
+.venv
+env/
+venv/

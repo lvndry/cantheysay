@@ -1,5 +1,4 @@
 import requests
-import sys
 from bs4 import BeautifulSoup
 from flask import Flask
 from flask import request
@@ -26,7 +25,7 @@ def parse_data(html_text):
     if len(strongs) > 0:
         for strong in strongs:
             if "ethnicity:" in str(strong).lower():
-                ethnicity = str(strong)
+                ethnicity = str(strong).lower()
                 break
 
     # Looking for tag african
@@ -35,33 +34,32 @@ def parse_data(html_text):
 
 
 def is_african(ethnicity: str, tags):
-    african = False
+    african_tag = False
     for child in tags.children:
         if "african" in str(child).lower():
-            african = True
+            african_tag = True
             break
 
-    return african == True or "african" in ethnicity.lower()
+    return african_tag == True or "african" in ethnicity
 
 
 @app.route('/search', methods=["POST"])
 def main():
     name = request.json["name"]
-    print(name)
-    theyCan = False
-    print("Can " + name + " say the n-word?")
+    can_they = False
+    app.logger.info("Can " + name + " say the n-word?")
     data, status = get_user(name)
     if status == 404:
         return {}, 404
     ethnicity, tags = parse_data(data)
     if is_african(ethnicity, tags) == True:
-        print("Yes")
-        theyCan = True
+        app.logger.info("Yes")
+        can_they = True
     else:
-        print("No")
+        app.logger.info("No")
 
     return {
-        "theycan": theyCan
+        "theycan": can_they
     }, 200
 
 
