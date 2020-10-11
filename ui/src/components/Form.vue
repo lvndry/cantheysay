@@ -1,7 +1,7 @@
 <template>
   <div class="ct-form-container">
     <form id="cantheyform" @submit="onSubmit" @submit.stop.prevent="prevent" class="container" novalidate="true">
-      Can <input name="name" v-model="name" class="ct-input" /> say the N word
+      Can <input name="name" type="text" v-model="name" class="ct-input" required /> say the N word
     </form>
     <div v-if="canthey !== null" class="ct-resp">
       {{ canthey ? "Yes" : "No" }}
@@ -35,6 +35,12 @@ export default class Form extends Vue {
   name = ""
   error: ErrorType | null = null;
   canthey: boolean | null = null;
+  mounted() {
+    const input = document.querySelector<HTMLElement>("input[name='name']")
+    if (input) {
+      input.focus()
+    }
+  }
 
   onSubmit(e: Event) {
     const { BASE_URL } = config;
@@ -69,4 +75,22 @@ export default class Form extends Vue {
 </script>
 
 <style>
+  .ct-input, .ct-input:focus {
+    background: transparent;
+    border: none;
+    outline-width: 0;
+  }
+
+  .ct-input:invalid:not(:focus) {
+    animation: blink-empty 1.5s infinite;
+    background-image: linear-gradient(black,black);
+    background-position: 1px center;
+    background-repeat: no-repeat;
+    background-size: 1px 1.2em;
+  }
+
+  @keyframes blink-empty {
+    0% { background-size: 1px 1.2em; }
+    50% { background-size: 0 1.2em; }
+  }
 </style>
