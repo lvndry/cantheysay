@@ -48,12 +48,8 @@ export default class Form extends Vue {
 
     e.preventDefault();
     axios.post(BASE_URL + "/search", { name: this.name })
-    .then(({ status, data }: SearchResponse) => {
-      if (status === 404) {
-        this.error = ErrorType.NOT_FOUND;
-      } else {
+    .then(({ data }: SearchResponse) => {
         this.canthey = data.canthey;
-      }
     })
     .catch((err) => {
       const { status } = err.response;
