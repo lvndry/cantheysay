@@ -2,12 +2,26 @@
 
 ## scrapper.py
 
-```console
-$ python scrapper.py "jason derulo"
+```bash
+# Terminal 1
+$ python scrapper.py
+
+# Terminal 2
+$ curl --location --request POST 'http://localhost:3030/search' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "jason derulo"
+}'
+
 Can jason derulo say the n-word?
 Yes
 
-$ python scrapper.py "Rita Ora"
+$ curl --location --request POST 'http://localhost:3030/search' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "rita ora"
+}'
+
 Can Rita Ora say the n-word?
 No
 ```
