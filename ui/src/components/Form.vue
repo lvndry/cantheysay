@@ -1,9 +1,7 @@
 <template>
   <div class="ct-form-container">
     <form id="cantheyform" @submit="onSubmit" @submit.stop.prevent="prevent" class="ct-container" novalidate="true">
-      <span>
-        Can <input name="name" minlength="2" type="text" v-model="name" class="ct-input" required /><span style="visibilty:hidden" class='measure'></span> say the n-word ?
-      </span>
+        Can <input name="name" minlength="2" type="search" v-model="name" class="ct-input" autocomplete="off" required/><span style="visibilty:hidden"></span> say the n-word ?
     </form>
     <div v-if="canthey !== null" class="ct-resp">
       {{ canthey ? "Yes" : "No" }}
@@ -11,10 +9,10 @@
     <div v-if="pending">
       <img src="../assets/array.gif" alt="pending.gif">
     </div>
-    <div class="error" v-if="error === 404">
+    <div class="error ct-resp" v-if="error === 404">
       User not found
     </div>
-    <div class="error" v-if="error == 500">
+    <div class="error ct-resp" v-if="error == 500">
       Something went wrong
     </div>
   </div>
@@ -43,16 +41,16 @@ export default class Form extends Vue {
 
   mounted() {
     const input = document.querySelector<HTMLInputElement>("input[name='name']")!;
-    if (input) {
-      input.focus()
 
-      input.addEventListener("input", function() {
-        const span = (input.nextElementSibling as HTMLSpanElement)!;
-          span.textContent = input.value;
-          this.style.width = (span.offsetWidth + 5) + "px"
-          span.textContent = ""
-      });
-    }
+    input.addEventListener("input", function() {
+      const span = (input.nextElementSibling as HTMLSpanElement)!;
+      span.textContent = input.value;
+      this.style.width = (span.offsetWidth + 5) + "px"
+      span.textContent = ""
+    });
+
+    // must be last
+    input.focus()
   }
 
   onSubmit(e: Event) {
@@ -105,6 +103,8 @@ export default class Form extends Vue {
     width: 1px;
   }
 
+  :focus { outline-style: none; -moz-outline-style: none;}
+
   .ct-input:invalid:not(:focus) {
     animation: blink-empty 1.5s infinite;
     background-image: linear-gradient(black,black);
@@ -121,4 +121,14 @@ export default class Form extends Vue {
   .ct-resp {
     font-size: 8em;
   }
+
+  /* clear the X for IE */
+  input[type=search]::-ms-clear { display: none; width : 0; height: 0; }
+  input[type=search]::-ms-reveal { display: none; width : 0; height: 0; }
+
+  /* clears the ‘X’ from Chrome */
+  input[type="search"]::-webkit-search-decoration,
+  input[type="search"]::-webkit-search-cancel-button,
+  input[type="search"]::-webkit-search-results-button,
+  input[type="search"]::-webkit-search-results-decoration { display: none; }
 </style>
