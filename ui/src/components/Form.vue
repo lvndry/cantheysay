@@ -25,13 +25,6 @@ import { Component, Vue } from "vue-property-decorator";
 import httpService from "@/services/http.service";
 import { ErrorType } from "@/errors";
 
-interface SearchResponse {
-  status: number;
-  data: {
-    canthey: boolean;
-  };
-}
-
 @Component
 export default class Form extends Vue {
   name = ""
@@ -58,6 +51,7 @@ export default class Form extends Vue {
 
     e.preventDefault();
     this.pending = true;
+    this.error = null;
     if (this.name.length === 0) {
     } else {
       httpService.searchUser(this.name)
@@ -100,7 +94,8 @@ export default class Form extends Vue {
     font-size: 1em;
     align-self: center;
     white-space: pre;
-    width: 1px;
+    padding: 0 8px;
+    box-sizing: content-box;
   }
 
   :focus { outline-style: none; -moz-outline-style: none;}
